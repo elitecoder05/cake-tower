@@ -15,9 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let blockHeight = 30; // Height of each cake layer
     let currentStackHeight = 0; // Current height of the stack
     let gameStarted = false;
-
-    // Cake flavors with gradients
-    const cakeFlavors = [
+      const cakeFlavors = [
         { 
             name: 'strawberry', 
             mainColor: '#FF9AA2',
@@ -69,24 +67,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // Block class
-    class Block {
+     class Block {
         constructor(y, width, height, isBase = false) {
             this.width = width;
             this.height = height;
             this.y = y;
             
             if (isBase) {
-                // Base block is centered
-                this.x = canvas.width / 2 - width / 2;
+                 this.x = canvas.width / 2 - width / 2;
                 this.isBase = true;
-                // Base is wooden plate
-                this.basePlate = true;
+                 this.basePlate = true;
             } else {
-                // Moving blocks start from left or right edge
-                this.x = direction > 0 ? -width : canvas.width;
-                // Randomly select a cake flavor
-                this.flavor = cakeFlavors[Math.floor(Math.random() * cakeFlavors.length)];
+                 this.x = direction > 0 ? -width : canvas.width;
+                 this.flavor = cakeFlavors[Math.floor(Math.random() * cakeFlavors.length)];
                 this.isBase = false;
             }
             
@@ -95,8 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         draw() {
             if (this.isBase && this.basePlate) {
-                // Draw wooden base plate with more detail
-                const gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+                 const gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
                 gradient.addColorStop(0, '#8B4513');
                 gradient.addColorStop(0.5, '#A0522D');
                 gradient.addColorStop(1, '#8B4513');
@@ -104,8 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fillStyle = gradient;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
                 
-                // Add wood grain effect
-                ctx.strokeStyle = '#6B3E26';
+                 ctx.strokeStyle = '#6B3E26';
                 ctx.lineWidth = 0.5;
                 for (let i = 0; i < this.width; i += 10) {
                     ctx.beginPath();
@@ -114,22 +105,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.stroke();
                 }
             } else if (!this.isBase) {
-                // Draw cake layer with gradient representing flavor
-                const gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+                 const gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
                 gradient.addColorStop(0, this.flavor.mainColor);
                 gradient.addColorStop(1, this.flavor.gradientColor);
                 
                 ctx.fillStyle = gradient;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
                 
-                // Draw frosting on top (white layer with slight transparency)
-                ctx.fillStyle = this.flavor.frostingColor;
+                 ctx.fillStyle = this.flavor.frostingColor;
                 ctx.globalAlpha = 0.85;
                 ctx.fillRect(this.x, this.y, this.width, 3);
                 ctx.globalAlpha = 1.0;
                 
-                // Draw decorative dots with flavor-specific color
-                const dotsCount = Math.floor(this.width / 20);
+                 const dotsCount = Math.floor(this.width / 20);
                 ctx.fillStyle = this.flavor.dotColor;
                 
                 for (let i = 0; i < dotsCount; i++) {
@@ -138,8 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.fill();
                 }
                 
-                // Add a subtle border around the cake layer
-                ctx.strokeStyle = this.flavor.gradientColor;
+                 ctx.strokeStyle = this.flavor.gradientColor;
                 ctx.lineWidth = 0.5;
                 ctx.strokeRect(this.x, this.y, this.width, this.height);
             }
@@ -149,8 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (this.moving) {
                 this.x += speed * direction;
                 
-                // Change direction when hitting screen edges
-                if (this.x + this.width > canvas.width) {
+                 if (this.x + this.width > canvas.width) {
                     direction = -1;
                 } else if (this.x < 0) {
                     direction = 1;
@@ -159,8 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Class for falling cake pieces (overhang pieces that fall down)
-    class FallingPiece {
+     class FallingPiece {
         constructor(x, y, width, height, flavor) {
             this.x = x;
             this.y = y;
@@ -168,12 +153,19 @@ document.addEventListener('DOMContentLoaded', () => {
             this.height = height;
             this.flavor = flavor;
             
-            // Physics properties for falling
-            this.velocityY = 1 + Math.random() * 2; // Random initial falling speed
-            this.velocityX = (Math.random() - 0.5) * 3; // Small random X movement
+//falling speed settings
+//             // (reduce these values to make pieces fall slower)
+            this.velocityY = 0.5 + Math.random() * 1; // Was: 1 + Math.random() * 2
+            
+            // (how much pieces move sideways while falling)
+            this.velocityX = (Math.random() - 0.5) * 1.5; // Was: (Math.random() - 0.5) * 3
+            
+            // Rotation properties
             this.rotation = 0;
-            this.rotationSpeed = (Math.random() - 0.5) * 0.2; // Random rotation speed
-            this.gravity = 0.2 + Math.random() * 0.1; // Acceleration
+            this.rotationSpeed = (Math.random() - 0.5) * 0.1; // Was: 0.2 (slower rotation)
+            
+            // (how quickly pieces speed up while falling)
+            this.gravity = 0.1 + Math.random() * 0.05; // Was: 0.2 + Math.random() * 0.1
         }
         
         update() {
@@ -270,6 +262,24 @@ document.addEventListener('DOMContentLoaded', () => {
         animate();
     }
 
+    // Restart the game function
+    function restartGame() {
+        // Cancel current animation
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+        
+        // Reset button text
+        tapButton.textContent = "TAP TO DROP CAKE";
+        
+        // Reset speed to initial value
+        speed = 2;
+        direction = 1;
+        
+        // Initialize the game again
+        initGame();
+    }
+
     // Function to create a new moving block
     function createNewBlock() {
         const prevBlock = blocks[blocks.length - 1];
@@ -280,9 +290,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle block placement
     function placeBlock() {
-        if (gameOver || !gameStarted) {
-            gameStarted = true;
+        if (gameOver) {
+            // Restart the game when clicked during game over
+            restartGame();
             return;
+        }
+        
+        // Set gameStarted to true on first click, but continue with placing the block
+        if (!gameStarted) {
+            gameStarted = true;
         }
         
         const currentBlock = blocks[blocks.length - 1];

@@ -62,7 +62,7 @@ body {
 
 #gameCanvas {
     flex: 1;
-    background: linear-gradient(180deg, #e6f7ff 0%, #cfe8fc 100%);
+    background: linear-gradient(180deg, #ffeef6 0%, #ffe0f0 25%, #fff0f8 50%, #fdf2ff 75%, #f8f0ff 100%);
     width: 100%;
     height: 100%;
     display: block;
